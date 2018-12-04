@@ -1,0 +1,23 @@
+plugins {
+    id 'java'
+}
+
+group 'com.bgrummitt.stravarunvisualiser'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+
+    //Ok Http https://square.github.io/okhttp/
+    implementation 'com.squareup.okhttp3:okhttp:3.10.0'
+
+    // https://mvnrepository.com/artifact/org.json/json
+    compile group: 'org.json', name: 'json', version: '20090211'
+
+}
