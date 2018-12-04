@@ -2,11 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cdd675a8-13e8-4fbf-93fe-bbccd3c5bdde" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/api/MainTester.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../strava_run_visualiser/.idea/compiler.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../strava_run_visualiser/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../strava_run_visualiser/src/main/java/MainTester.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../StravaDataDisplay/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../StravaDataDisplay/src/com/bgrummitt/MainTester.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/api/MainTester.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/api/MainTester.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/.gradle/" />
@@ -27,8 +25,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/api/MainTester.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="358">
-              <caret line="47" column="13" lean-forward="true" selection-start-line="47" selection-start-column="13" selection-end-line="47" selection-end-column="13" />
+            <state relative-caret-position="73">
+              <caret line="11" column="45" selection-start-line="11" selection-start-column="45" selection-end-line="11" selection-end-column="45" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -124,7 +122,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1543946257163" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1543946292054" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -228,8 +226,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/api/MainTester.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="358">
-          <caret line="47" column="13" lean-forward="true" selection-start-line="47" selection-start-column="13" selection-end-line="47" selection-end-column="13" />
+        <state relative-caret-position="73">
+          <caret line="11" column="45" selection-start-line="11" selection-start-column="45" selection-end-line="11" selection-end-column="45" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public class MainTester {
 
-    final private static String token = "eb9ea74fba50d30408f7206c9f6a6f5d4a3f97e1";
+    final private static String token = "TODO";
     final private static String URLAthleteStats = "https://www.strava.com/api/v3/athletes/32257897/stats?page=&per_page=";
 
     private static String JsonData;
