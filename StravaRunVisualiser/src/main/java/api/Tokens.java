@@ -1,7 +1,7 @@
 package api;
 
-public class Tokens{
+final class Tokens{
 
-    final static public String StravaAPI = "TODO";
+    final static String StravaAPI = "TEST";
 
 }
