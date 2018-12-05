@@ -1,5 +1,6 @@
 package api;
 
+import api.Tokens;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -12,44 +13,37 @@ public class MainTester {
     final private static String token = "TODO";
     final private static String URLAthleteStats = "https://www.strava.com/api/v3/athletes/32257897/stats?page=&per_page=";
 
-    private static String JsonData;
-    private static Boolean JsonDataHasUpdated = false;
-
     public static void main(String[] args){
-        System.out.println(ConnectApi(URLAthleteStats));
-        System.out.println("???????");
+        try {
+            System.out.println(ConnectApi(URLAthleteStats));
+        }catch(IOException e){
+            System.out.println(e);
+        }
     }
 
     /**
-     * Function to connect to the api
+     * Function to connect to the api and return json string
      */
-    public static String ConnectApi(String URL){
+    public static String ConnectApi(String URL) throws IOException {
 
         // Create new HTTP client
         OkHttpClient client = new OkHttpClient();
 
-        // Create the request
+        // Create the request with the url and header with access token
         Request request = new Request.Builder()
                 .url(URL)
-                .addHeader("Authorization", "Bearer " + token)
+                .addHeader("Authorization", "Bearer " + Tokens.StravaAPI)
                 .build();
 
         System.out.println(request.toString());
 
-        // Create call with created request
-        Call call = client.newCall(request);
-
-        System.out.println("Created Call");
-
-        // Execute the call
-        try (Response response = client.newCall(request).execute()){
-            if(response.isSuccessful()) {
-                return response.body().string();
-            }
-        }catch (IOException e){
-            System.out.println("IO Exception : " + e);
+        // Execute the call. If the response is successful return the json string else throw exception
+        Response response = client.newCall(request).execute();
+        if(response.isSuccessful()) {
+            return response.body().string();
+        }else{
+            throw new IOException("Unsuccessful Response");
         }
-        return null;
     }
 
     /**
