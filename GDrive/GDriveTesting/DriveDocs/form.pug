@@ -1,0 +1,18 @@
+extends layout.pug
+block content
+	h1 Add A New Employee Form
+	h3 Add a new Person Form
+	form(method='POST', action='/new')
+		label(for="inputText") Name &nbsp;
+		input(type='text' name='name' id='name' class='form-control' placeholder='Jo Blogs' required autofocus)
+		br
+		br
+		label(for="inputText") Job Title &nbsp;
+		input(type='text' name='jtitle' id='jtitle' class='form-control' placeholder='Analyst' required)
+		br
+		br
+		label(for="inputText") Hourly Rate &nbsp;
+		input(type='text' name='hrate' id='hrate' class='form-control' placeholder='25' required)
+		br
+		br
+		button(class="btn btn-primary" type="submit") GO!

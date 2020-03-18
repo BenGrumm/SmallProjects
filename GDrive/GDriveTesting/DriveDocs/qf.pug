@@ -1,0 +1,14 @@
+extends layout.pug
+block content
+	h1=message
+	h3 #{total} results found
+	table
+		tr
+			th name
+			th currency
+			th Weekly_Cost
+		each v, k in data
+			tr
+				td #{v.name}
+				td is charged at $
+				td #{v.weekly_cost}

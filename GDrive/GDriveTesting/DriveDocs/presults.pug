@@ -1,0 +1,23 @@
+extends layout.pug
+block content
+	h1=title
+	h3.alert-warning=message	
+	main
+		p.results #{total} results found
+		if parseInt(total,10) > 0
+			table
+				tr
+					th Project ID
+					th Employee Name
+					th Title
+					th Project Description
+					th Task name
+					each v, k in data
+						tr
+						td #{v.project_id} 
+						td #{v.name}
+						td #{v.title}
+						td #{v.description}
+						td #{v.task_name}
+			
+			

@@ -1,0 +1,10 @@
+extends layout.pug
+block content
+	h1=message
+	h3 #{total} results found
+	table
+		tr
+			th title
+		each v, k in data
+			tr
+				td #{v.title}
