@@ -14,13 +14,13 @@ cwd = os.getcwd()
 driveFolderName = '/DriveDocs'
 drivePath = cwd + driveFolderName
 
+if not os.path.isdir(drivePath):
+	os.mkdir(drivePath)
+
 def DownloadFIlesInFolder(folder, recursive=True):
 	# Auto-iterate through all files that matches this query
 	file_list = drive.ListFile({'q': "'%s' in parents and trashed=false" %(folder)}).GetList()
 
-	if not os.path.isdir(drivePath):
-		os.mkdir(drivePath)
-	
 	for file in file_list:
 		if file['mimeType'] == 'application/vnd.google-apps.folder' and recursive:
 			DownloadFIlesInFolder(file['id'])
