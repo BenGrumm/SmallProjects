@@ -1,37 +1,38 @@
+from pydrive.drive import GoogleDrive
 from pydrive.auth import GoogleAuth
 import shutil
 import sys
 import os
 
-gauth = GoogleAuth()
-# Create local webserver and auto handles authentication.
-gauth.LocalWebserverAuth()
-
-from pydrive.drive import GoogleDrive
-
-drive = GoogleDrive(gauth)
-
+drive = None
 cwd = os.getcwd()
 driveFolderName = '/DriveDocs'
 drivePath = cwd + driveFolderName
 
-if not os.path.isdir(drivePath):
-	os.mkdir(drivePath)
+def authenticate():
+	gauth = GoogleAuth()
+	# Create local webserver and auto handles authentication.
+	gauth.LocalWebserverAuth()
 
-def FindInitFolder(folderName):
+	global drive
+
+	drive = GoogleDrive(gauth)
+
+
+def findInitFolder(folderName):
 	return 'root'
 
-def SearchFolder(stringToFind):
+def searchFolder(stringToFind):
 	return False, ['Could/NotFind', 'CouldNotFind']
 
-def DownloadFIlesInFolder(folder, recursive=True):
+def downloadFIlesInFolder(folder, recursive=True):
 	# Auto-iterate through all files that matches this query
 	file_list = drive.ListFile({'q': "'%s' in parents and trashed=false" %(folder)}).GetList()
 
 	for file in file_list:
 
 		if file['mimeType'] == 'application/vnd.google-apps.folder' and recursive:
-			DownloadFIlesInFolder(file['id'])
+			downloadFIlesInFolder(file['id'])
 		elif file['mimeType'] != 'application/vnd.google-apps.folder':
 			print("Downloading and moving " + file['title'])
 
@@ -42,10 +43,14 @@ def DownloadFIlesInFolder(folder, recursive=True):
 			shutil.move(cwd + '/' + file['title'], drivePath + '/' + file['title'])
 
 def main(folderToSearch, searchString):
+	authenticate()
 
-	DownloadFIlesInFolder(FindInitFolder(folderToSearch), False)
+	if not os.path.isdir(drivePath):
+		os.mkdir(drivePath)
 
-	succesDown, filePaths = SearchFolder(searchString)
+	downloadFIlesInFolder(findInitFolder(folderToSearch), False)
+
+	succesDown, filePaths = searchFolder(searchString)
 
 	if succesDown:
 		print("Found %d occurences of the string %s" %(len(filePaths), searchString))
@@ -59,7 +64,7 @@ def main(folderToSearch, searchString):
 
 if __name__ == '__main__':
 
-	if(len(sys.argv) == 2):
-		main(argv[0], argv[1])
+	if(len(sys.argv) == 3):
+		main(sys.argv[1], sys.argv[2])
 	else:
 		print('Please provide 2 arguments in the form: python FileDownloader.py [Folder Name To Search] [String To Search]')
