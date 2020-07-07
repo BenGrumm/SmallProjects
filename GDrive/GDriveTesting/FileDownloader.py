@@ -23,6 +23,14 @@ def findInitFolder(folderName):
 	return 'root'
 
 def searchFolder(stringToFind):
+
+	for fileName in os.listdir(drivePath):
+		print(fileName)
+		if(fileName.endswith('.txt')):
+			f = open(drivePath + 'fileName')
+
+			print(f.read())
+
 	return False, ['Could/NotFind', 'CouldNotFind']
 
 def downloadFIlesInFolder(folder, recursive=True):
