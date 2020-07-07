@@ -3,6 +3,7 @@ from pydrive.auth import GoogleAuth
 import shutil
 import sys
 import os
+import re
 
 drive = None
 cwd = os.getcwd()
@@ -24,14 +25,23 @@ def findInitFolder(folderName):
 
 def searchFolder(stringToFind):
 
+	foundString = False
+	filesWithString = []
+
+	regexSearch = r"\b%s\b"%(stringToFind)
+
 	for fileName in os.listdir(drivePath):
-		print(fileName)
-		if(fileName.endswith('.txt')):
-			f = open(drivePath + 'fileName')
 
-			print(f.read())
+		# Files downloaded without extensions may cause problems with file types / dirs?
+		# if(fileName.endswith('.txt')):
+		f = open(drivePath + '/' + fileName, 'r')
 
-	return False, ['Could/NotFind', 'CouldNotFind']
+		# May produce errors with special regex characters in string
+		if re.search(regexSearch, f.read()):
+			foundString = True
+			filesWithString.append(fileName);
+
+	return foundString, filesWithString
 
 def downloadFIlesInFolder(folder, recursive=True):
 	# Auto-iterate through all files that matches this query
@@ -42,7 +52,6 @@ def downloadFIlesInFolder(folder, recursive=True):
 		if file['mimeType'] == 'application/vnd.google-apps.folder' and recursive:
 			downloadFIlesInFolder(file['id'])
 		elif file['mimeType'] != 'application/vnd.google-apps.folder':
-			print("Downloading and moving " + file['title'])
 
 			#TODO Fix downloading files with / in them
 
@@ -61,10 +70,11 @@ def main(folderToSearch, searchString):
 	succesDown, filePaths = searchFolder(searchString)
 
 	if succesDown:
-		print("Found %d occurences of the string %s" %(len(filePaths), searchString))
+		print("Found %d files with occurences of the string %s" %(len(filePaths), searchString))
+	else:
+		print("String Not Found")
 
 	if os.path.isdir(drivePath):
-		print("Removing Folder")
 		try:
 			shutil.rmtree(drivePath)
 		except OSError as e:
