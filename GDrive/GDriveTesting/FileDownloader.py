@@ -21,7 +21,16 @@ def authenticate():
 
 
 def findInitFolder(folderName):
-	return 'root'
+
+	returnFolder = 'root'
+
+	initFolder = drive.ListFile({'q': "title = '%s' and mimeType = 'application/vnd.google-apps.folder'" %(folderName)})
+	# print(next(initFolder))
+
+	if len(initFolder) == 1:
+		returnFolder = next(initFolder)[0].get('id')
+
+	return returnFolder
 
 def searchFolder(stringToFind):
 
@@ -35,6 +44,8 @@ def searchFolder(stringToFind):
 		# Files downloaded without extensions may cause problems with file types / dirs?
 		# if(fileName.endswith('.txt')):
 		f = open(drivePath + '/' + fileName, 'r')
+
+		print('Searching File %s' %(fileName))
 
 		# May produce errors with special regex characters in string
 		if re.search(regexSearch, f.read()):
@@ -56,6 +67,7 @@ def downloadFIlesInFolder(folder, recursive=True):
 			#TODO Fix downloading files with / in them
 
 			file.GetContentFile(file['title'], mimetype='text/plain')
+			print('Downloading file with name %s' %(file['title']))
 			# Move the downloaded file into the correct folder
 			shutil.move(cwd + '/' + file['title'], drivePath + '/' + file['title'])
 
@@ -65,12 +77,16 @@ def main(folderToSearch, searchString):
 	if not os.path.isdir(drivePath):
 		os.mkdir(drivePath)
 
-	downloadFIlesInFolder(findInitFolder(folderToSearch), False)
+	print('Downloading Files')
+	downloadFIlesInFolder(findInitFolder(folderToSearch), True)
 
+	print('Searching Files')
 	succesDown, filePaths = searchFolder(searchString)
 
 	if succesDown:
 		print("Found %d files with occurences of the string %s" %(len(filePaths), searchString))
+		print("File Name(s) = ")
+		print(filePaths)
 	else:
 		print("String Not Found")
 
@@ -85,4 +101,5 @@ if __name__ == '__main__':
 	if(len(sys.argv) == 3):
 		main(sys.argv[1], sys.argv[2])
 	else:
+		# [Folder Name To Search Format] Format = 
 		print('Please provide 2 arguments in the form: python FileDownloader.py [Folder Name To Search] [String To Search]')
