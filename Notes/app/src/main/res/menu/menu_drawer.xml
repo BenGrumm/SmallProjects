@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/TODO_List"
+            android:title="TODO List"
+            android:icon="@drawable/baseline_speaker_notes_black_24"
+            android:checked="true"
+            />
+
+        <item
+            android:id="@+id/Completed_List"
+            android:title="Completed"
+            android:icon="@drawable/baseline_done_outline_black_24"
+            />
+
+    </group>
+</menu>

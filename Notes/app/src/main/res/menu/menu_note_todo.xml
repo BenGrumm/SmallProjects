@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/edit_button"
+        android:icon="@drawable/baseline_edit_white_24"
+        android:title="edit_button"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/complete_button"
+        android:icon="@drawable/outline_done_white_24"
+        android:title="complete_button"
+        app:showAsAction="always"/>
+
+</menu>
