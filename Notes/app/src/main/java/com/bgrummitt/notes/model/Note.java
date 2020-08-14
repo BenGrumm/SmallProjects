@@ -6,12 +6,22 @@ public class Note {
     private String noteBody;
     private Boolean isCompleted;
     private int DatabaseID;
+    protected int nextNoteID;
 
     public Note(String subject, String noteBody, Boolean isCompleted, int id){
         this.subject = subject;
         this.noteBody = noteBody;
         this.isCompleted = isCompleted;
         this.DatabaseID = id;
+        this.nextNoteID = -1;
+    }
+
+    public Note(String subject, String noteBody, Boolean isCompleted, int id, int nextID){
+        this.subject = subject;
+        this.noteBody = noteBody;
+        this.isCompleted = isCompleted;
+        this.DatabaseID = id;
+        this.nextNoteID = nextID;
     }
 
     public Note(String subject, String noteBody, Boolean isCompleted){
@@ -52,4 +62,11 @@ public class Note {
         this.DatabaseID = id;
     }
 
+    public int getNextNoteID(){
+        return nextNoteID;
+    }
+
+    public void setNextNoteID(int id){
+        this.nextNoteID = id;
+    }
 }

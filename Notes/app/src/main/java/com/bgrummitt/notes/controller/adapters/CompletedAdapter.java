@@ -50,8 +50,10 @@ public class CompletedAdapter extends ListAdapter {
     public void deleteItem(int position) {
         mRecentlyDeletedItem = mNotes.get(position);
         mRecentlyDeletedDate = mNoteDates.get(position);
-        removeAndRestructureNotes(position);
+        mNotes.remove(position);
         mNoteDates.remove(position);
+        changeLinks(position);
+        ((MainActivity)mContext).deleteNoteFromCompleted(mRecentlyDeletedItem);
         notifyItemRemoved(position);
         showUndoSingleSnackBar(mRecentlyDeletedItem.getDatabaseID());
     }
@@ -68,24 +70,8 @@ public class CompletedAdapter extends ListAdapter {
                 mNoteDates.add(idToUndo, mRecentlyDeletedDate);
             }
         });
-        snackbar.addCallback(new Snackbar.Callback(){
 
-            @Override
-            public void onDismissed(Snackbar snackbar, int event) {
-                Log.d(TAG, "Snackbar Dismissed");
-                if(event != Snackbar.Callback.DISMISS_EVENT_ACTION){
-                    Log.d(TAG, "Snackbar Dismissed By Timeout / New SnackBar / Swipe");
-                    removeItemFromDB(new CompletedNote(mRecentlyDeletedItem, mRecentlyDeletedDate));
-                }
-            }
-
-        });
         snackbar.show();
-    }
-
-    private void removeItemFromDB(CompletedNote note){
-        changeIDs(note.getDatabaseID(), -1);
-        ((MainActivity)mContext).deleteNoteFromCompleted(note);
     }
 
     public ListTypes getType(){

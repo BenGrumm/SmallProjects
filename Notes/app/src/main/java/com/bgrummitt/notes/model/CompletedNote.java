@@ -19,18 +19,26 @@ public class CompletedNote extends Note {
         addDate(date);
     }
 
+    public CompletedNote(String subject, String noteBody, Boolean isCompleted, int id, int nextNoteID,String date){
+        super(subject, noteBody, isCompleted, id, nextNoteID);
+
+        addDate(date);
+    }
+
     public CompletedNote(Note note, String date){
         super(note.getSubject(), note.getNoteBody(), note.getIsCompleted(), note.getDatabaseID());
 
         addDate(date);
     }
 
-    public CompletedNote(Note note, Date date){
+    public CompletedNote(Note note, Date date, int nextNoteID){
         super(note.getSubject(), note.getNoteBody(), note.getIsCompleted(), note.getDatabaseID());
 
         dateNoteCompleted = date;
 
         initialiseSDF();
+
+        this.nextNoteID = nextNoteID;
     }
 
     public void addDate(String date){

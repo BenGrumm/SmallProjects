@@ -24,38 +24,31 @@ public class TODOAdapter extends ListAdapter {
     public void deleteItem(int position){
         mRecentlyDeletedItem = mNotes.get(position);
         mNotes.remove(position);
+        changeLinks(position);
+        ((MainActivity)mContext).markNoteCompleted(mRecentlyDeletedItem);
         notifyItemRemoved(position);
         showUndoSingleSnackBar(position);
     }
 
-    protected void showUndoSingleSnackBar(final int idToUndo) {
+    protected void showUndoSingleSnackBar(final int position) {
         View view = ((Activity) mContext).findViewById(R.id.list);
         Snackbar snackbar = Snackbar.make(view, R.string.snack_bar_undo,
                 Snackbar.LENGTH_LONG);
         snackbar.setAction(R.string.snack_bar_undo, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                insertNoteIntoList(mRecentlyDeletedItem, idToUndo);
+                undoLastDelete(position);
             }
-        });
-        snackbar.addCallback(new Snackbar.Callback(){
-
-            @Override
-            public void onDismissed(Snackbar snackbar, int event) {
-                Log.d(TAG, "Snackbar Dismissed");
-                if(event != Snackbar.Callback.DISMISS_EVENT_ACTION){
-                    Log.d(TAG, "Snackbar Dismissed By Timeout / New SnackBar / Swipe");
-                    removeItemFromDB(mRecentlyDeletedItem);
-                }
-            }
-
         });
         snackbar.show();
     }
 
-    private void removeItemFromDB(Note note){
-        changeIDs(note.getDatabaseID(), -1);
-        ((MainActivity)mContext).markNoteCompleted(note);
+    private void undoLastDelete(int prevPosition){
+        if(prevPosition > 1) {
+            mNotes.get(prevPosition - 1).setNextNoteID(mRecentlyDeletedItem.getDatabaseID());
+        }
+        insertNoteIntoList(mRecentlyDeletedItem, prevPosition);
+        ((MainActivity)mContext).insertIntoDB(mRecentlyDeletedItem);
     }
 
     public ListTypes getType() {

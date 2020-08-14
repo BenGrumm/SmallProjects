@@ -116,6 +116,10 @@ public abstract class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListV
 
     public void addNote(Note note){
         mNotes.add(note);
+        // Edit previous note pointer if its not the first note (Note is already added)
+        if(mNotes.size() > 1) {
+            mNotes.get(mNotes.size() - 2).setNextNoteID(note.getDatabaseID());
+        }
     }
 
     public Context getContext(){
@@ -126,11 +130,23 @@ public abstract class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListV
 
     protected abstract void showUndoSingleSnackBar(int idToUndo);
 
-    public void changeIDs(int idGreaterThan, int changeBy){
-        for(Note note : mNotes){
-            if(note.getDatabaseID() > idGreaterThan){
-                note.setDatabaseID(note.getDatabaseID() + changeBy);
-            }
+//    public void changeIDs(int idGreaterThan, int changeBy){
+//        for(Note note : mNotes){
+//            if(note.getDatabaseID() > idGreaterThan){
+//                note.setDatabaseID(note.getDatabaseID() + changeBy);
+//            }
+//        }
+//    }
+
+    protected void changeLinks(int position){
+        // Recycler view works from 1
+        // Arrays from 0 so - 2 to find prev and -1 in arr for current
+        if(position > 1){
+            Log.d(TAG, "Changing Link " + Integer.toString(position));
+            Log.d(TAG, "ID Of Element - " + mNotes.get(position - 1).getDatabaseID());
+            Log.d(TAG, "Before Next ID = " + mNotes.get(position-2).getNextNoteID());
+            mNotes.get(position - 2).setNextNoteID(mNotes.get(position - 1).getDatabaseID());
+            Log.d(TAG, "After Next ID = " + mNotes.get(position-2).getNextNoteID());
         }
     }
 
@@ -159,10 +175,10 @@ public abstract class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListV
         }
     }
 
-    public void removeAndRestructureNotes(int position){
-        mNotes.remove(position);
-        changeIDs(mRecentlyDeletedItem.getDatabaseID(), -1);
-    }
+//    public void removeAndRestructureNotes(int position){
+//        mNotes.remove(position);
+//        changeIDs(mRecentlyDeletedItem.getDatabaseID(), -1);
+//    }
 
     public void deleteSelected(){
         mDeletedNotes = new ArrayList<>();

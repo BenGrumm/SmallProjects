@@ -200,6 +200,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         dialog.show();
     }
 
+    public void insertIntoDB(Note noteToInsert){
+        mDatabaseHelper.insertNoteIntoTODO(noteToInsert);
+    }
+
     /**
      * Function to move note from T.O.D.O to completed
      * @param note to be moved
@@ -214,7 +218,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      */
     public void deleteNoteFromCompleted(Note note){
         mDatabaseHelper.deleteNoteFromDB(DatabaseHelper.COMPLETED_TABLE_NAME, note.getDatabaseID());
-        mDatabaseHelper.changeDbIds(DatabaseHelper.COMPLETED_TABLE_NAME, note.getDatabaseID(), -1);
+        mDatabaseHelper.editPointersDelete(DatabaseHelper.COMPLETED_TABLE_NAME, note.getDatabaseID(), note.getNextNoteID());
     }
 
     /**
@@ -223,10 +227,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * @param note body of the note to be inserted into the db
      */
     public void makeNewNote(String subject, String note){
+        Note newNote = new Note(subject, note, false, -1, -1);
+        int noteID = mDatabaseHelper.insertNoteIntoTODO(newNote);
+        newNote.setDatabaseID(noteID);
         //Add note to db
-        mDatabaseHelper.addNoteToBeCompleted(subject, note, mDatabaseHelper.getToBeCompletedCurrentMaxID() + 1);
         // Add the note in the adapter and refresh
-        mTODOListAdapter.addNote(new Note(subject, note, false, mDatabaseHelper.getToBeCompletedCurrentMaxID()));
+        mTODOListAdapter.addNote(newNote);
         mTODOListAdapter.notifyDataSetChanged();
     }
 
@@ -298,53 +304,132 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mItemTouchHelper.attachToRecyclerView(mRecyclerView);
     }
 
+//    /**
+//     * Retrieve notes from the database of notes to be completed
+//     * @return list of T.O.D.O notes
+//     */
+//    public List<Note> getNotesFromDB(){
+//        Cursor cursor = mDatabaseHelper.getNotesFromDB(DatabaseHelper.TO_COMPLETE_TABLE_NAME);
+//
+//        List<Note> notes = new ArrayList<>();
+//
+//        int indexID = cursor.getColumnIndex(DatabaseHelper.ID_COLUMN_NAME);
+//        int indexSubject = cursor.getColumnIndex(DatabaseHelper.SUBJECT_COLUMN_NAME);
+//        int indexNote = cursor.getColumnIndex(DatabaseHelper.NOTE_COLUMN_NAME);
+//
+//        if(cursor.moveToFirst()){
+//            while(!cursor.isAfterLast()){
+//                notes.add(new Note(cursor.getString(indexSubject), cursor.getString(indexNote), false, cursor.getInt(indexID)));
+//                cursor.moveToNext();
+//            }
+//        }
+//
+//        return notes;
+//    }
+
     /**
      * Retrieve notes from the database of notes to be completed
      * @return list of T.O.D.O notes
      */
     public List<Note> getNotesFromDB(){
-        Cursor cursor = mDatabaseHelper.getNotesFromDB(DatabaseHelper.TO_COMPLETE_TABLE_NAME);
+        // If empty returns -1
+        int currentNoteToGetID = mDatabaseHelper.getIDOfFirstElement(DatabaseHelper.TO_COMPLETE_TABLE_NAME);
 
         List<Note> notes = new ArrayList<>();
+        Cursor tempCursor;
 
-        int indexID = cursor.getColumnIndex(DatabaseHelper.ID_COLUMN_NAME);
-        int indexSubject = cursor.getColumnIndex(DatabaseHelper.SUBJECT_COLUMN_NAME);
-        int indexNote = cursor.getColumnIndex(DatabaseHelper.NOTE_COLUMN_NAME);
+        Log.d(TAG, "First ID = " + currentNoteToGetID);
 
-        if(cursor.moveToFirst()){
-            while(!cursor.isAfterLast()){
-                notes.add(new Note(cursor.getString(indexSubject), cursor.getString(indexNote), false, cursor.getInt(indexID)));
-                cursor.moveToNext();
-            }
+        while(currentNoteToGetID != -1) {
+
+            tempCursor = mDatabaseHelper.getNoteFromDB(DatabaseHelper.TO_COMPLETE_TABLE_NAME, currentNoteToGetID);
+            Log.d(TAG, "TC Size = " + tempCursor.getCount());
+            final int indexID = tempCursor.getColumnIndex(DatabaseHelper.ID_COLUMN_NAME);
+            final int indexSubject = tempCursor.getColumnIndex(DatabaseHelper.SUBJECT_COLUMN_NAME);
+            final int indexNote = tempCursor.getColumnIndex(DatabaseHelper.NOTE_COLUMN_NAME);
+            final int indexNextID = tempCursor.getColumnIndex(DatabaseHelper.ID_NEXT_NOTE);
+
+            tempCursor.moveToFirst();
+
+            Note note = new Note(tempCursor.getString(indexSubject),
+                    tempCursor.getString(indexNote),
+                    false,
+                    tempCursor.getInt(indexID),
+                    tempCursor.getInt(indexNextID));
+
+            currentNoteToGetID = note.getNextNoteID();
+
+            tempCursor.close();
+
+            notes.add(note);
+
         }
 
         return notes;
     }
+
+//    /**
+//     * Retrieve notes from the database of completed notes
+//     * @return list of completed notes
+//     */
+//    public List<CompletedNote> getCompletedNotesFromDB(){
+//        Cursor cursor = mDatabaseHelper.getNotesFromDB(DatabaseHelper.COMPLETED_TABLE_NAME);
+//
+//        List<CompletedNote> notes = new ArrayList<>();
+//
+//        int indexID = cursor.getColumnIndex(DatabaseHelper.ID_COLUMN_NAME);
+//        int indexSubject = cursor.getColumnIndex(DatabaseHelper.SUBJECT_COLUMN_NAME);
+//        int indexNote = cursor.getColumnIndex(DatabaseHelper.NOTE_COLUMN_NAME);
+//        int indexDate = cursor.getColumnIndex(DatabaseHelper.DATE_COLUMN_NAME);
+//
+//        // For every entry in the cursor retrieve every note and move to the next
+//        if(cursor.moveToNext()){
+//            while(!cursor.isAfterLast()){
+//                notes.add(new CompletedNote(cursor.getString(indexSubject), cursor.getString(indexNote), false, cursor.getInt(indexID), cursor.getString(indexDate)));
+//                cursor.moveToNext();
+//            }
+//        }
+//
+//        return notes;
+//
+//    }
 
     /**
      * Retrieve notes from the database of completed notes
      * @return list of completed notes
      */
     public List<CompletedNote> getCompletedNotesFromDB(){
-        Cursor cursor = mDatabaseHelper.getNotesFromDB(DatabaseHelper.COMPLETED_TABLE_NAME);
+        int currentNoteToGetID = mDatabaseHelper.getIDOfFirstElement(DatabaseHelper.COMPLETED_TABLE_NAME);
 
         List<CompletedNote> notes = new ArrayList<>();
+        Cursor tempCursor;
 
-        int indexID = cursor.getColumnIndex(DatabaseHelper.ID_COLUMN_NAME);
-        int indexSubject = cursor.getColumnIndex(DatabaseHelper.SUBJECT_COLUMN_NAME);
-        int indexNote = cursor.getColumnIndex(DatabaseHelper.NOTE_COLUMN_NAME);
-        int indexDate = cursor.getColumnIndex(DatabaseHelper.DATE_COLUMN_NAME);
+        while(currentNoteToGetID != -1) {
 
-        // For every entry in the cursor retrieve every note and move to the next
-        if(cursor.moveToNext()){
-            while(!cursor.isAfterLast()){
-                notes.add(new CompletedNote(cursor.getString(indexSubject), cursor.getString(indexNote), false, cursor.getInt(indexID), cursor.getString(indexDate)));
-                cursor.moveToNext();
-            }
+            tempCursor = mDatabaseHelper.getNoteFromDB(DatabaseHelper.COMPLETED_TABLE_NAME, currentNoteToGetID);
+            final int indexID = tempCursor.getColumnIndex(DatabaseHelper.ID_COLUMN_NAME);
+            final int indexSubject = tempCursor.getColumnIndex(DatabaseHelper.SUBJECT_COLUMN_NAME);
+            final int indexNote = tempCursor.getColumnIndex(DatabaseHelper.NOTE_COLUMN_NAME);
+            final int indexNextID = tempCursor.getColumnIndex(DatabaseHelper.ID_NEXT_NOTE);
+            final int indexDate = tempCursor.getColumnIndex(DatabaseHelper.DATE_COLUMN_NAME);
+            tempCursor.moveToFirst();
+
+            CompletedNote note = new CompletedNote(tempCursor.getString(indexSubject),
+                    tempCursor.getString(indexNote),
+                    false,
+                    tempCursor.getInt(indexID),
+                    tempCursor.getInt(indexNextID),
+                    tempCursor.getString(indexDate));
+
+            currentNoteToGetID = note.getNextNoteID();
+
+            tempCursor.close();
+
+            notes.add(note);
+
         }
 
         return notes;
-
     }
 
     @Override
