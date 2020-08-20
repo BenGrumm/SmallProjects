@@ -11,25 +11,40 @@ import com.bgrummitt.notes.activities.MainActivity;
 import com.bgrummitt.notes.controller.databse.DatabaseHelper;
 import com.bgrummitt.notes.model.Note;
 
+import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Adapter for the list of items that still need to be completed
+ */
 public class TODOAdapter extends ListAdapter {
 
     private static final String TAG = TODOAdapter.class.getSimpleName();
+
+    private List<Integer> mDeletedNoteIDs;
 
     public TODOAdapter(Context context, List<Note> notes) {
         super(context, notes);
     }
 
+    /**
+     * Function to delete item from both db and list, change pointers and show undo snackbar
+     * @param position in the list to delete
+     */
     public void deleteItem(int position){
         mRecentlyDeletedItem = mNotes.get(position);
         mNotes.remove(position);
         changeLinks(position);
-        ((MainActivity)mContext).markNoteCompleted(mRecentlyDeletedItem);
+        int idOFCompletedNote = ((MainActivity)mContext).markNoteCompleted(mRecentlyDeletedItem);
+        mRecentlyDeletedItem.setDatabaseID(idOFCompletedNote);
         notifyItemRemoved(position);
         showUndoSingleSnackBar(position);
     }
 
+    /**
+     * Function to show snackbar and provide actions for when clicked
+     * @param position of item in list before deletion
+     */
     protected void showUndoSingleSnackBar(final int position) {
         View view = ((Activity) mContext).findViewById(R.id.list);
         Snackbar snackbar = Snackbar.make(view, R.string.snack_bar_undo,
@@ -37,20 +52,20 @@ public class TODOAdapter extends ListAdapter {
         snackbar.setAction(R.string.snack_bar_undo, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                undoLastDelete(position);
+                int newDBID = ((MainActivity)mContext).insertIntoDB(DatabaseHelper.TO_COMPLETE_TABLE_NAME, mRecentlyDeletedItem);
+                Note fakeNote = new Note("Subject", "Note", true, mRecentlyDeletedItem.getDatabaseID(), -1);
+                undoLastDelete(mRecentlyDeletedItem, position, newDBID);
+                // TODO DELETE FROM COMPLETED LIST
+                ((MainActivity) mContext).deleteNoteFromCompleted(fakeNote);
             }
         });
         snackbar.show();
     }
 
-    private void undoLastDelete(int prevPosition){
-        if(prevPosition > 1) {
-            mNotes.get(prevPosition - 1).setNextNoteID(mRecentlyDeletedItem.getDatabaseID());
-        }
-        insertNoteIntoList(mRecentlyDeletedItem, prevPosition);
-        ((MainActivity)mContext).insertIntoDB(mRecentlyDeletedItem);
-    }
-
+    /**
+     * Get type of the adapter this is
+     * @return List type from enum
+     */
     public ListTypes getType() {
         return ListTypes.TODO_LIST;
     }
@@ -58,39 +73,27 @@ public class TODOAdapter extends ListAdapter {
     @Override
     public void deleteSelected() {
         super.deleteSelected();
+
+        mDeletedNoteIDs = new ArrayList<>();
+
+        for(Note note : mDeletedNotes) {
+            mDeletedNoteIDs.add(((MainActivity) mContext).markNoteCompleted(note));
+        }
+
         notifyDataSetChanged();
-        showUndoMultipleSnackBar();
+
+        showUndoMultipleSnackBar(DatabaseHelper.TO_COMPLETE_TABLE_NAME);
     }
 
-    protected void showUndoMultipleSnackBar() {
-        View view = ((Activity) mContext).findViewById(R.id.list);
-        Snackbar snackbar = Snackbar.make(view, R.string.snack_bar_undo,
-                Snackbar.LENGTH_LONG);
-        snackbar.setAction(R.string.snack_bar_undo, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                undoRecentSelectedDeleted();
-                notifyDataSetChanged();
-            }
-        });
-        snackbar.addCallback(new Snackbar.Callback(){
+    @Override
+    public void undoRecentSelectedDeleted(String tableToUndo){
+        super.undoRecentSelectedDeleted(tableToUndo);
 
-            @Override
-            public void onDismissed(Snackbar snackbar, int event) {
-                Log.d(TAG, "Snackbar Dismissed");
-                if(event != Snackbar.Callback.DISMISS_EVENT_ACTION){
-                    Log.d(TAG, "Snackbar Dismissed By Timeout / New SnackBar / Swipe");
-                    for(int i = 0; i < mDeletedNotes.size(); i++){
-                        Log.d(TAG, "deleting");
-                        mDeletedNotes.get(i).setDatabaseID(mDeletedNotes.get(i).getDatabaseID() - i);
-                        ((MainActivity)mContext).markNoteCompleted(mDeletedNotes.get(i));
-                    }
-                    resetIDs();
-                }
-            }
-
-        });
-        snackbar.show();
+        //TODO delete from completed
+        for(int i = mDeletedNoteIDs.size() - 1; i >= 0; i--){
+            Note fakeNote = new Note("subj", "note", true, mDeletedNoteIDs.get(i), -1);
+            ((MainActivity)mContext).deleteNoteFromCompleted(fakeNote);
+        }
     }
 
 }

@@ -22,10 +22,15 @@ import com.bgrummitt.notes.R;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Abstract class that will take a list of notes and display them in a recycler view
+ * deal with notes being added and deleted
+ */
 public abstract class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder> {
 
     private static final String TAG = ListAdapter.class.getSimpleName();
 
+    // Strings used for intents.
     public static final String NOTE_ID = "NOTE_ID";
     public static final String NOTE_SUBJECT = "NOTE_SUBJECT";
     public static final String NOTE_BODY = "NOTE_BODY";
@@ -43,6 +48,10 @@ public abstract class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListV
         mNotes = notes;
     }
 
+    /**
+     * Inner class for the display of the elements in the recycler view that will implement an on
+     * click listener.
+     */
     public class ListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         public TextView subjectTextView;
@@ -59,6 +68,7 @@ public abstract class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListV
             completeCheckBox.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    // If the checkbox is check uncheck, if unchecked check
                     if(completeCheckBox.isChecked()){
                         Log.d(TAG, "Check Box Ticked : " + getLayoutPosition());
                         mNotes.get(getLayoutPosition()).setIsCompleted(true);
@@ -72,6 +82,11 @@ public abstract class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListV
             itemView.setOnClickListener(this);
         }
 
+        /**
+         * Take note elements and bind them to the view holder
+         * @param note assigned to view
+         * @param position of view in list
+         */
         public void bindList(Note note, final int position){
             subjectTextView.setText(note.getSubject());
             noteTextView.setText(note.getNoteBody());
@@ -80,6 +95,7 @@ public abstract class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListV
 
         @Override
         public void onClick(View v) {
+            // On click start a view note activity
             Note note = mNotes.get(getLayoutPosition());
             Toast.makeText(mContext, subjectTextView.getText(), Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(mContext, ViewNoteActivity.class);
@@ -110,10 +126,18 @@ public abstract class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListV
         return mNotes.size();
     }
 
+    /**
+     * Get notes in list
+     * @return list of notes
+     */
     public List<Note> getNotes(){
         return mNotes;
     }
 
+    /**
+     * Add a note to the recycler view
+     * @param note to add
+     */
     public void addNote(Note note){
         mNotes.add(note);
         // Edit previous note pointer if its not the first note (Note is already added)
@@ -130,37 +154,48 @@ public abstract class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListV
 
     protected abstract void showUndoSingleSnackBar(int idToUndo);
 
-//    public void changeIDs(int idGreaterThan, int changeBy){
-//        for(Note note : mNotes){
-//            if(note.getDatabaseID() > idGreaterThan){
-//                note.setDatabaseID(note.getDatabaseID() + changeBy);
-//            }
-//        }
-//    }
-
+    /**
+     * Function to edit surrounding pointers of a note
+     * @param position of the note in the list from recycler view (+1 from array)
+     */
     protected void changeLinks(int position){
         // Recycler view works from 1
         // Arrays from 0 so - 2 to find prev and -1 in arr for current
         if(position > 1){
-            Log.d(TAG, "Changing Link " + Integer.toString(position));
-            Log.d(TAG, "ID Of Element - " + mNotes.get(position - 1).getDatabaseID());
-            Log.d(TAG, "Before Next ID = " + mNotes.get(position-2).getNextNoteID());
             mNotes.get(position - 2).setNextNoteID(mNotes.get(position - 1).getDatabaseID());
-            Log.d(TAG, "After Next ID = " + mNotes.get(position-2).getNextNoteID());
         }
     }
 
-    public void resetIDs(){
-        for(int i = 0; i < mNotes.size(); i++){
-            mNotes.get(i).setDatabaseID(i+1);
+    /**
+     * Function to add a note which has recently been deleted
+     * @param noteToUndo note that was deleted
+     * @param prevPosition position that note was in
+     * @param newID id from the db
+     */
+    protected void undoLastDelete(Note noteToUndo, int prevPosition, int newID){
+        if(prevPosition > 1) {
+            mNotes.get(prevPosition - 1).setNextNoteID(newID);
         }
+        noteToUndo.setDatabaseID(newID);
+        insertNoteIntoList(noteToUndo, prevPosition);
     }
 
+    /**
+     * Function to add note to list and re-configure surrounding pointers
+     * @param note that is being added
+     * @param position of note in the list
+     */
     public void insertNoteIntoList(Note note, int position){
         mNotes.add(position, note);
         notifyItemInserted(position);
     }
 
+    /**
+     * Function to edit note in recycler view
+     * @param position pos in list
+     * @param subject new subject
+     * @param body new body
+     */
     public void editNote(int position, String subject, String body){
         Note note = mNotes.get(position);
         note.setSubject(subject);
@@ -169,18 +204,20 @@ public abstract class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListV
 
     public abstract ListTypes getType();
 
+    /**
+     * Function to check / uncheck all elements in the recycler view
+     * @param type type of check true = checked, false = unchecked
+     */
     public void selectAll(Boolean type){
         for(Note note : mNotes){
             note.setIsCompleted(type);
         }
     }
 
-//    public void removeAndRestructureNotes(int position){
-//        mNotes.remove(position);
-//        changeIDs(mRecentlyDeletedItem.getDatabaseID(), -1);
-//    }
-
-    public void deleteSelected(){
+    /**
+     * Delete all elements in array that are checked
+     */
+    protected void deleteSelected(){
         mDeletedNotes = new ArrayList<>();
         mDeletedNotePosition = new ArrayList<>();
         int whileILessThan = mNotes.size();
@@ -189,17 +226,48 @@ public abstract class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListV
                 mDeletedNotes.add(mNotes.get(i));
                 mNotes.remove(i);
                 mDeletedNotePosition.add(i + mDeletedNotes.size());
+                // Decrease current element position and max search position
                 whileILessThan--;
                 i--;
             }
         }
-        Log.d(TAG, "Number To Delete : " + mDeletedNotes.size());
+
+        notifyDataSetChanged();
     }
 
-    public void undoRecentSelectedDeleted(){
-        for(int i = 0; i < mDeletedNotes.size(); i++){
-            mNotes.add(mDeletedNotePosition.get(i) - 1, mDeletedNotes.get(i));
+    /**
+     * Undo the recent deleted items from a delete of selected items
+     * @param tableUndo table to undo delete from
+     */
+    public void undoRecentSelectedDeleted(String tableUndo){
+        // Do it in reverse order
+        for(int i = mDeletedNotes.size() - 1; i >= 0; i--){
+            Log.d(TAG, "Undoing Select Delete i = " + i);
+            int id = ((MainActivity)mContext).insertIntoDB(tableUndo, mDeletedNotes.get(i));
+            // Change the next db ID in the deleted list if just added note was ensuing the prev
+            if(i > 0 && mDeletedNotes.get(i-1).getNextNoteID() == mDeletedNotes.get(i).getDatabaseID()){
+                mDeletedNotes.get(i - 1).setNextNoteID(id);
+            }
+            undoLastDelete(mDeletedNotes.get(i), mDeletedNotePosition.get(i) - (i + 1), id);
         }
+    }
+
+    /**
+     * Show an undo snackbar for selected delete
+     * @param dbTable table to delete from
+     */
+    protected void showUndoMultipleSnackBar(final String dbTable) {
+        View view = ((Activity) mContext).findViewById(R.id.list);
+        Snackbar snackbar = Snackbar.make(view, R.string.snack_bar_undo,
+                Snackbar.LENGTH_LONG);
+        snackbar.setAction(R.string.snack_bar_undo, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                undoRecentSelectedDeleted(dbTable);
+                notifyDataSetChanged();
+            }
+        });
+        snackbar.show();
     }
 
     public enum ListTypes{

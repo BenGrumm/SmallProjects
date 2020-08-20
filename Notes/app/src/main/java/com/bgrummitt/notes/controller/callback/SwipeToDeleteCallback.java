@@ -12,6 +12,10 @@ import android.view.View;
 import com.bgrummitt.notes.R;
 import com.bgrummitt.notes.controller.adapters.CompletedAdapter;
 
+/**
+ * Class that allows the views in the recycler view to be swiped and the swipes have a background
+ * with image behind view
+ */
 public class SwipeToDeleteCallback extends ItemTouchHelper.SimpleCallback{
 
     private CompletedAdapter mListAdapter;

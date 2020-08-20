@@ -32,6 +32,7 @@ public class EditNoteActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
+        // Insert info into Activity from intent
         mNoteSubject = intent.getStringExtra(ListAdapter.NOTE_SUBJECT);
         mNoteBody = intent.getStringExtra(ListAdapter.NOTE_BODY);
         mNoteType = (ListAdapter.ListTypes)intent.getSerializableExtra(ListAdapter.NOTE_TYPE);
@@ -77,15 +78,19 @@ public class EditNoteActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
+        // Take the id of options item clicked
         switch (item.getItemId()){
             case R.id.save_note_button:
+                // create return intent with new subject & body
                 Intent returnIntent = new Intent();
                 returnIntent.putExtra(ListAdapter.NOTE_SUBJECT, mSubjectEditText.getText().toString());
                 returnIntent.putExtra(ListAdapter.NOTE_BODY, mBodyEditText.getText().toString());
+                // Set the new result and finish activity
                 setResult(ViewNoteActivity.EDITED_RETURN_RESULT, returnIntent);
                 finish();
                 break;
             case android.R.id.home:
+                // return
                 finish();
                 break;
         }

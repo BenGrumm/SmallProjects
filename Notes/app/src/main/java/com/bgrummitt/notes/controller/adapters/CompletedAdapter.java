@@ -8,6 +8,7 @@ import android.view.View;
 
 import com.bgrummitt.notes.R;
 import com.bgrummitt.notes.activities.MainActivity;
+import com.bgrummitt.notes.controller.databse.DatabaseHelper;
 import com.bgrummitt.notes.model.CompletedNote;
 import com.bgrummitt.notes.model.Note;
 
@@ -19,55 +20,44 @@ public class CompletedAdapter extends ListAdapter {
 
     private static final String TAG = TODOAdapter.class.getSimpleName();
 
-    private List<Date> mNoteDates;
-    private Date mRecentlyDeletedDate;
-
-    public CompletedAdapter(Context context, List<CompletedNote> notes) {
-        super(context, convertNotes(notes));
-
-        mNoteDates = new ArrayList<>();
-
-        for(CompletedNote note : notes){
-            mNoteDates.add(note.getDateNoteCompleted());
-        }
-    }
-
-    public static List<Note> convertNotes(List<CompletedNote> notes){
-        List<Note> convertedNotes = new ArrayList<>();
-
-        for(CompletedNote note : notes){
-            convertedNotes.add(convertNote(note));
-        }
-
-        return convertedNotes;
-    }
-
-    public static Note convertNote(CompletedNote note){
-        return new Note(note.getSubject(), note.getNoteBody(), note.getIsCompleted(), note.getDatabaseID());
+    public CompletedAdapter(Context context, List<Note> notes) {
+        super(context, notes);
     }
 
     @Override
     public void deleteItem(int position) {
         mRecentlyDeletedItem = mNotes.get(position);
-        mRecentlyDeletedDate = mNoteDates.get(position);
         mNotes.remove(position);
-        mNoteDates.remove(position);
         changeLinks(position);
         ((MainActivity)mContext).deleteNoteFromCompleted(mRecentlyDeletedItem);
         notifyItemRemoved(position);
-        showUndoSingleSnackBar(mRecentlyDeletedItem.getDatabaseID());
+        showUndoSingleSnackBar(position);
     }
 
     @Override
-    protected void showUndoSingleSnackBar(final int idToUndo) {
+    public void deleteSelected(){
+        super.deleteSelected();
+
+        for(Note note : mDeletedNotes) {
+            ((MainActivity) mContext).deleteNoteFromCompleted(note);
+        }
+
+        notifyDataSetChanged();
+
+        showUndoMultipleSnackBar(DatabaseHelper.COMPLETED_TABLE_NAME);
+    }
+
+    @Override
+    protected void showUndoSingleSnackBar(final int position) {
         View view = ((Activity) mContext).findViewById(R.id.list);
         Snackbar snackbar = Snackbar.make(view, R.string.snack_bar_undo,
                 Snackbar.LENGTH_LONG);
         snackbar.setAction(R.string.snack_bar_undo, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                insertNoteIntoList(mRecentlyDeletedItem, idToUndo);
-                mNoteDates.add(idToUndo, mRecentlyDeletedDate);
+                // Reinsert note to db and get returned id of note in db
+                int newDBID = ((MainActivity)mContext).insertIntoDB(DatabaseHelper.COMPLETED_TABLE_NAME, mRecentlyDeletedItem);
+                undoLastDelete(mRecentlyDeletedItem, position, newDBID);
             }
         });
 
