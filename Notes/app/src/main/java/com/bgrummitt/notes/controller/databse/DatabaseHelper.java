@@ -13,7 +13,11 @@ import com.bgrummitt.notes.model.Note;
 import java.util.Calendar;
 import java.util.Locale;
 
-    public class DatabaseHelper extends SQLiteOpenHelper {
+/**
+ * Class that deals with all db interaction
+ * Extends SQLiteOpenHelper
+ */
+public class DatabaseHelper extends SQLiteOpenHelper {
 
     private final static String TAG = DatabaseHelper.class.getSimpleName();
 
@@ -59,77 +63,40 @@ import java.util.Locale;
         onCreate(db);
     }
 
-    /**
-     * Add a note to the database of completed notes
-     * @param subject string of subject of note
-     * @param note string of body of the note
-     * @return id of new note (-1 if error)
-     */
-    public int addNoteToBeCompleted(String subject, String note){
-        ContentValues cv = new ContentValues();
-        cv.put(SUBJECT_COLUMN_NAME, subject);
-        cv.put(NOTE_COLUMN_NAME, note);
 
-        long result = mDatabase.insert(TO_COMPLETE_TABLE_NAME, null, cv);
-        Log.d(TAG, Long.toString(result));
-
-        return (int)result;
-    }
-
-    /**
-     * Insert a note in a given position in the T.O.D.O db
-     * @param note the note to be inserted
-     * @return new db id
-     */
-    public int insertNoteIntoTODO(Note note){
-        // Add note to end of the list
-        int newID = addNoteToBeCompleted(note.getSubject(), note.getNoteBody());
-
-        // Configure surrounding pointers to position item correctly
-        editPointersInsert(TO_COMPLETE_TABLE_NAME, newID, note.getNextNoteID());
-
-        return newID;
-    }
-
-    public int insertNoteIntoCompleted(CompletedNote note, int nextID){
-        // Next note will be -1 as its being added to end of list
-        int noteID = addCompletedNote(note);
-
-        // Edit pointer as this will be the last
-        editPointersInsert(COMPLETED_TABLE_NAME, noteID, nextID);
-
-        return noteID;
-    }
-
-    /**
-     * Add a note to the database of completed notes
-     * @param note note to be written to db
-     * @return if completed successfully return true else false
-     */
-    public int addCompletedNote(CompletedNote note){
+     /**
+      * Insert a note in a given position in the specified table
+      * @param tableName table for note to be inserted to
+      * @param note the note to be inserted
+      * @return new db id
+      */
+    public int insertNoteIntoTable(String tableName, Note note){
+        // Add note to end of the list with null pointer
         ContentValues cv = new ContentValues();
         cv.put(SUBJECT_COLUMN_NAME, note.getSubject());
         cv.put(NOTE_COLUMN_NAME, note.getNoteBody());
-        cv.put(DATE_COLUMN_NAME, note.convertDateToString(note.getDateNoteCompleted()));
 
-        long result = mDatabase.insert(COMPLETED_TABLE_NAME, null, cv);
-
-        if(result == -1){
-            return -1;
-        }else{
-            Cursor rowID = mDatabase.rawQuery(String.format(Locale.ENGLISH, "SELECT %s FROM %s WHERE rowid = %d", ID_COLUMN_NAME, COMPLETED_TABLE_NAME, result), null);
-            rowID.moveToFirst();
-            int id = rowID.getInt(0);
-            rowID.close();
-            return id;
+        if(tableName.equals(COMPLETED_TABLE_NAME)){
+            CompletedNote cNote = (CompletedNote) note;
+            cv.put(DATE_COLUMN_NAME, cNote.convertDateToString(cNote.getDateNoteCompleted()));
         }
+
+        // Will return -1 if error else id
+        int newID = (int) mDatabase.insert(tableName, null, cv);
+        Log.d(TAG, Long.toString(newID));
+
+        // Configure surrounding pointers to position item correctly
+        editPointersInsert(tableName, newID, note.getNextNoteID());
+
+        return newID;
     }
 
     /**
      * Function to move a given note from the T.O.D.O db to the completed db
      * @param note to be removed from one and added to another
+     * @return ID of the note in the completed DB
      */
-    public void moveNoteToCompleted(Note note){
+    public int moveNoteToCompleted(Note note){
 
         deleteNoteFromDB(TO_COMPLETE_TABLE_NAME, note.getDatabaseID());
 
@@ -137,33 +104,21 @@ import java.util.Locale;
 
         CompletedNote cNote = new CompletedNote(note, Calendar.getInstance().getTime(), -1);
 
-        Log.d(TAG, Integer.toString(insertNoteIntoCompleted(cNote, -1)));
+        int completedTableID = insertNoteIntoTable(COMPLETED_TABLE_NAME, cNote);
+
+        Log.d(TAG, Integer.toString(completedTableID));
+
+        return completedTableID;
 
     }
 
-//    /**
-//     * Function to change all ids > than id of given noteID by a given value
-//     * @param noteID id of the where all notes with > id's changed
-//     * @param changeByX the value to change the id's by
-//     */
-//    public void changeDbIds(String tableName, int noteID, int changeByX){
-//        String query = "SELECT * FROM " + tableName + " WHERE " + ID_COLUMN_NAME  + " > " + noteID;
-//
-//        Cursor mCursor = mDatabase.rawQuery(query, null);
-//
-//        if(mCursor.moveToFirst()){
-//            int columnID = mCursor.getColumnIndex(ID_COLUMN_NAME);
-//            int posID;
-//            while(!mCursor.isAfterLast()){
-//                posID = mCursor.getInt(columnID);
-//                query = "UPDATE " + tableName + " SET " + ID_COLUMN_NAME + " = " + (posID + changeByX) + " WHERE " + ID_COLUMN_NAME  + " = " + posID;
-//                mDatabase.execSQL(query);
-//                mCursor.moveToNext();
-//            }
-//        }
-//        mCursor.close();
-//    }
-
+    /**
+     * Function to edit the pointers around an element that is being deleted and then deleted the
+     * element
+     * @param tableName table of the element to delete from
+     * @param noteIDToEdit id in the db of note to delete
+     * @param nextNoteID id of note deleted note points to
+     */
     public void editPointersDelete(String tableName, int noteIDToEdit, int nextNoteID){
         String queryIDPrevNote = "SELECT " + ID_COLUMN_NAME +
                 " FROM "+ tableName +
@@ -220,6 +175,11 @@ import java.util.Locale;
         mDatabase.execSQL(updateNoteNext);
     }
 
+    /**
+     * Function to get ID of the first element in the table (one that no other element points to)
+     * @param tableName name of table to get id from
+     * @return id
+     */
     public int getIDOfFirstElement(String tableName){
         String query = "SELECT " + ID_COLUMN_NAME +
                         " FROM " + tableName +
@@ -242,11 +202,24 @@ import java.util.Locale;
         }
     }
 
+    /**
+     * Function to retrieve a note from the given table
+     * @param dbName name of db to retrieve notes from
+     * @param noteID id of note to retrieve
+     * @return cursor with sql query return
+     */
     public Cursor getNoteFromDB(String dbName, int noteID){
         String query = "SELECT * FROM " + dbName + " WHERE " + ID_COLUMN_NAME + " = " + noteID + ";";
         return mDatabase.rawQuery(query, null);
     }
 
+    /**
+     * Function to change data of a note in the db
+     * @param tableName table to edit
+     * @param dbID id of note to edit
+     * @param subject new subject
+     * @param body new body
+     */
     public void editNote(String tableName, int dbID, String subject, String body){
         String query = "UPDATE %s SET %s = \"%s\", %s = \"%s\" WHERE %s = %d";
         query = String.format(Locale.getDefault(), query, tableName, SUBJECT_COLUMN_NAME, subject, NOTE_COLUMN_NAME, body, ID_COLUMN_NAME, dbID);

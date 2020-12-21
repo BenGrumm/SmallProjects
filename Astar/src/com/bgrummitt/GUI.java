@@ -34,6 +34,7 @@ public class GUI extends JFrame{
         buttonLayout.add(clearButton, BorderLayout.WEST);
 
         // Create new 10x10 grid of maze
+        // When changing size of grid must also change where path is going
         gridPanel = new GridPanel(10, 10);
 
         // Add buttons and maze to JFrame

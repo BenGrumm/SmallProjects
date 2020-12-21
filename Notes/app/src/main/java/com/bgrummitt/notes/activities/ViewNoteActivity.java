@@ -129,6 +129,9 @@ public class ViewNoteActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Function to take the information in the view not and pass it using an intent
+     */
     private void convertActivityToEdit(){
         Intent intent = new Intent(this, EditNoteActivity.class);
         intent.putExtra(ListAdapter.NOTE_SUBJECT, mNoteSubject);
@@ -155,6 +158,11 @@ public class ViewNoteActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Function to take the edited information and save it to the db
+     * @param subject edited subject
+     * @param body edited body
+     */
     public void editTodoNote(String subject, String body){
         DatabaseHelper dbHelper = new DatabaseHelper(this, "NOTES_DB");
         dbHelper.editNote(DatabaseHelper.TO_COMPLETE_TABLE_NAME, mDbID, subject, body);
@@ -164,6 +172,12 @@ public class ViewNoteActivity extends AppCompatActivity {
         intent.putExtra(ListAdapter.NOTE_SUBJECT, subject);
     }
 
+    /**
+     * Return proper information in intent
+     * @param subject
+     * @param body
+     * @param position
+     */
     public void setReturnIntent(String subject, String body, int position){
         Intent intent = new Intent();
         intent.putExtra(ListAdapter.NOTE_SUBJECT, subject);

@@ -2,3 +2,5 @@ GDrive/GDriveTesting/client_secrets.json
 StravaRunVisualiser/src/main/java/api/Tokens.java
 StravaRunVisualiser/out/production/classes/api/Tokens.class
 StravaRunVisualiser/src/main/java/api/Tokens.java
+*.pyc
+*.class
