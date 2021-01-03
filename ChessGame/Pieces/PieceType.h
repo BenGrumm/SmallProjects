@@ -32,6 +32,10 @@ class PieceType{
 
 };
 
+inline bool operator==(const PieceType& pt1, const PieceType& pt2){
+	return &pt1 == &pt2;
+}
+
 enum class Colour{
 	BLACK,
 	WHITE

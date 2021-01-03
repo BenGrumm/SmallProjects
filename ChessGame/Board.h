@@ -15,10 +15,11 @@ class Board{
 		static bool withinBoard(int x, int y);
 		[[nodiscard]] const ChessPiece* getPosition(int x, int y) const;
 		void movePiece(int originX, int originY, int destinationX, int destinationY);
+		void deletePiece(int x, int y);
 		friend std::ostream& operator<<(std::ostream& os, const Board& b);
 		[[nodiscard]] ChessPiece*** getBoard();
+		[[nodiscard]] int getMoveNumber() const;
 	private:
-		int moveNumber;
 		ChessPiece*** chessBoard;
 		void populateBoard();
 
@@ -57,6 +58,7 @@ inline ChessPiece*** Board::getBoard(){
 }
 
 inline void Board::movePiece(int originX, int originY, int destinationX, int destinationY){
+	std::cout << "Test" << std::endl;
 	// if piece is being take delete
 	if(chessBoard[destinationY][destinationX]){
 		delete chessBoard[destinationY][destinationX];
@@ -65,7 +67,12 @@ inline void Board::movePiece(int originX, int originY, int destinationX, int des
 	chessBoard[destinationY][destinationX] = chessBoard[originY][originX];
 	chessBoard[originY][originX] = NULL;
 
-	chessBoard[destinationY][destinationX]->updatePosition(destinationX, destinationY);
+	chessBoard[destinationY][destinationX]->move(destinationX, destinationY);
+
+}
+
+inline void Board::deletePiece(int x, int y){
+	chessBoard[y][x] = NULL;
 }
 
 std::ostream& operator<<(std::ostream& os, const Board& b);
