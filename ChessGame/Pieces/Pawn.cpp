@@ -28,10 +28,10 @@ bool Pawn::isValid(int newX, int newY, const Board* board) const{
 		const ChessPiece* enPassantPiece = board->getPosition(newX, yPosition);
 
 		std::cout << "En Passent Pawn - " << board->getPosition(newX, yPosition) << ", New Pos - " << newPosition << std::endl;
-		std::cout << "X = " << newX << ", Y = " << yPosition << ", Pawn Moved On - " << ((Pawn*)enPassantPiece)->getDoubleMoveNum() << ", Move Num - " << board->getMoveNumber() << std::endl;
+		std::cout << "X = " << newX << ", Y = " << yPosition << ", Pawn Moved On - " << ((Pawn*)enPassantPiece)->getDoubleMoveNum() << ", Move Num - " << "move num" << std::endl;
 
-		//TODO check pawn double move in move before current
-		if(enPassantPiece->getPieceColour() == !colourType && enPassantPiece->getPieceType() == PieceType::PAWN && ((Pawn*)enPassantPiece)->getDoubleMoveNum() == -1){
+		// Need to get move number
+		if(enPassantPiece->getPieceColour() == !colourType && enPassantPiece->getPieceType() == PieceType::PAWN && ((Pawn*)enPassantPiece)->getDoubleMoveNum() == (board->getMoveNumber() - 1)){
 			return true;
 		}
 	}

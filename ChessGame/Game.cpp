@@ -23,7 +23,7 @@ bool Game::movePiece(int originX, int originY, int destinationX, int destination
 	// If pawn double jumped set move it did so or if its taking enPassant delete piece behind
 	if(pieceToMove->getPieceType() == PieceType::PAWN){
 		if(destinationX == originX && (originY == (destinationY + 2) || originY == (destinationY - 2))){
-			((Pawn*) pieceToMove)->setDoubleMove(moveNumber);
+			((Pawn*) pieceToMove)->setDoubleMove(board->getMoveNumber());
 		}else if(board->getPosition(destinationX, destinationY) == NULL && originX != destinationX){
 			board->deletePiece(destinationX, originY);
 		}
@@ -31,8 +31,6 @@ bool Game::movePiece(int originX, int originY, int destinationX, int destination
 	}
 
 	board->movePiece(originX, originY, destinationX, destinationY);
-
-	moveNumber++;
 
 	return true;
 }

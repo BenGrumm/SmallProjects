@@ -6,6 +6,7 @@
 #include "Pieces/ChessPiece.h"
 #include "Pieces/PieceType.h"
 #include "Pieces/Pawn.h"
+#include "Pieces/Queen.h"
 
 class Board{
 
@@ -20,6 +21,7 @@ class Board{
 		[[nodiscard]] ChessPiece*** getBoard();
 		[[nodiscard]] int getMoveNumber() const;
 	private:
+		int moveNumber = 0;
 		ChessPiece*** chessBoard;
 		void populateBoard();
 
@@ -47,10 +49,17 @@ inline void Board::populateBoard(){
 		chessBoard[6][x] = new Pawn(Colour::WHITE, x, 6);
 		chessBoard[1][x] = new Pawn(Colour::BLACK, x, 1);
 	}
+
+	chessBoard[7][3] = new Queen(Colour::WHITE, 3, 7);
+	chessBoard[0][3] = new Queen(Colour::BLACK, 3, 0);
 }
 
 inline const ChessPiece* Board::getPosition(int x, int y) const{
 	return chessBoard[y][x];
+}
+
+inline int Board::getMoveNumber() const{
+	return moveNumber;
 }
 
 inline ChessPiece*** Board::getBoard(){
@@ -58,8 +67,9 @@ inline ChessPiece*** Board::getBoard(){
 }
 
 inline void Board::movePiece(int originX, int originY, int destinationX, int destinationY){
-	std::cout << "Test" << std::endl;
-	// if piece is being take delete
+	moveNumber++;
+
+	// if piece is being taken delete
 	if(chessBoard[destinationY][destinationX]){
 		delete chessBoard[destinationY][destinationX];
 	}

@@ -18,23 +18,20 @@ class Game{
 		[[nodiscard]] Colour whosTurn() const;
 		friend std::ostream& operator<<(std::ostream& os, Game& g);
 	private:
-		// moveNumber increased for each sides turn
-		int moveNumber;
 		Board* board;
 
 };
 
 inline Game::Game(){
 	board = new Board();
-	moveNumber = 0;
 }
 
 inline Colour Game::whosTurn() const{
-	return ((moveNumber % 2) == 0) ? Colour::WHITE : Colour::BLACK;
+	return ((board->getMoveNumber() % 2) == 0) ? Colour::WHITE : Colour::BLACK;
 }
 
 inline std::ostream& operator<<(std::ostream& os, Game& g){
-	os << "Turn = " << g.whosTurn() << ", Turn Num = " << g.moveNumber << std::endl;
+	os << "Turn = " << g.whosTurn() << ", Turn Num = " << g.board->getMoveNumber() << std::endl;
 	os << *g.board;
 	return os;
 }

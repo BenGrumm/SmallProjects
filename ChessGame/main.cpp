@@ -4,6 +4,7 @@
 #include "Board.h"
 #include "Pieces/Pawn.h"
 #include "MoveInput.h"
+#include "Pieces/Queen.h"
 
 using namespace std;
 
