@@ -19,9 +19,7 @@ class ChessPiece{
 		Colour colourType;
 		const PieceType& piece;
 		int xPosition, yPosition;
-		ChessPiece() : piece(PieceType::PAWN){
-			std::cout << "Shouldnt be called" << std::endl;
-		}
+		ChessPiece() : piece(PieceType::PAWN){std::cout << "ERROR SHOULD PROBABLY FIX - Shouldnt be called" << std::endl;}
 
 };
 

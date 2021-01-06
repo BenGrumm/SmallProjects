@@ -5,3 +5,4 @@ StravaRunVisualiser/src/main/java/api/Tokens.java
 *.pyc
 *.class
 *.exe
+*.o

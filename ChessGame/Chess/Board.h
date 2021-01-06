@@ -7,11 +7,13 @@
 #include "Pieces/PieceType.h"
 #include "Pieces/Pawn.h"
 #include "Pieces/Queen.h"
+#include "Pieces/Rook.h"
 
 class Board{
 
 	public:
 		Board();
+		~Board();
 		// Bounds of board 0-7
 		static bool withinBoard(int x, int y);
 		[[nodiscard]] const ChessPiece* getPosition(int x, int y) const;
@@ -29,6 +31,18 @@ class Board{
 
 inline Board::Board(){
 	populateBoard();
+}
+
+inline Board::~Board(){
+	for(int y = 0; y < 8; y++){
+		for(int x = 0; x < 8; x++){
+			if(chessBoard[y][x] != NULL){
+				delete chessBoard[y][x];
+			}
+		}
+
+		delete[] chessBoard[y];
+	}
 }
 
 inline bool Board::withinBoard(int x, int y){
@@ -52,6 +66,11 @@ inline void Board::populateBoard(){
 
 	chessBoard[7][3] = new Queen(Colour::WHITE, 3, 7);
 	chessBoard[0][3] = new Queen(Colour::BLACK, 3, 0);
+
+	for(int x = 0; x < 2; x++){
+		chessBoard[7][x * 7] = new Rook(Colour::WHITE, (x * 7), 7);
+		chessBoard[0][x * 7] = new Rook(Colour::BLACK, (x * 7), 0);
+	}
 }
 
 inline const ChessPiece* Board::getPosition(int x, int y) const{

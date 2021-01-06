@@ -1,10 +1,10 @@
 #include <iostream>
 
-#include "Game.h"
-#include "Board.h"
-#include "Pieces/Pawn.h"
 #include "MoveInput.h"
-#include "Pieces/Queen.h"
+#include "../Chess/Game.h"
+#include "../Chess/Board.h"
+#include "../Chess/Pieces/Pawn.h"
+#include "../Chess/Pieces/Queen.h"
 
 using namespace std;
 
