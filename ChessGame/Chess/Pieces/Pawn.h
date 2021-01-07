@@ -9,6 +9,8 @@ class Pawn : public ChessPiece{
 
 	public:
 		Pawn(Colour ct, int x, int y);
+		Pawn(const Pawn& p);
+		~Pawn() = default;
 		[[nodiscard]] bool isValid(int newX, int newY, const Board* board) const;
 		[[nodiscard]] int getDoubleMoveNum();
 		void setDoubleMove(int moveNum);
@@ -22,6 +24,11 @@ inline Pawn::Pawn(Colour ct, int x, int y) : ChessPiece(ct, PieceType::PAWN, x, 
 	// If white move up board, else black and move down
 	direction = (this->colourType == Colour::WHITE) ? -1 : 1;
 	movedOnMove = -1;
+}
+
+inline Pawn::Pawn(const Pawn& p) : ChessPiece(p.colourType, PieceType::PAWN, p.xPosition, p.yPosition){
+	direction = p.direction;
+	movedOnMove = p.movedOnMove;
 }
 
 inline void Pawn::setDoubleMove(int moveNum){

@@ -1,3 +1,5 @@
+#include <memory>
+
 #include "Game.h"
 #include "Pieces/PieceType.h"
 
@@ -13,7 +15,7 @@
  **/
 bool Game::movePiece(int originX, int originY, int destinationX, int destinationY){
 
-	const ChessPiece* pieceToMove = board->getPosition(originX, originY);
+	const std::shared_ptr<ChessPiece> pieceToMove = board->getPosition(originX, originY);
 
 	// Check square of which piece to move is not null, its that sides turn, and the move is valid
 	if(pieceToMove == NULL || pieceToMove->getPieceColour() != whosTurn() || !pieceToMove->isValid(destinationX, destinationY, board)){
@@ -23,7 +25,7 @@ bool Game::movePiece(int originX, int originY, int destinationX, int destination
 	// If pawn double jumped set move it did so or if its taking enPassant delete piece behind
 	if(pieceToMove->getPieceType() == PieceType::PAWN){
 		if(destinationX == originX && (originY == (destinationY + 2) || originY == (destinationY - 2))){
-			((Pawn*) pieceToMove)->setDoubleMove(board->getMoveNumber());
+			std::dynamic_pointer_cast<Pawn>(pieceToMove)->setDoubleMove(board->getMoveNumber());
 		}else if(board->getPosition(destinationX, destinationY) == NULL && originX != destinationX){
 			board->deletePiece(destinationX, originY);
 		}

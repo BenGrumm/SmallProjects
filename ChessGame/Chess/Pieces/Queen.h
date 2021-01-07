@@ -10,6 +10,7 @@ class Queen : public HorizontalVertical, public Diagonal {
 
 	public:
 		Queen(Colour ct, int x, int y);
+		~Queen() = default;
 		bool isValid(int newX, int newY, const Board* board) const;
 
 };

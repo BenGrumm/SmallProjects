@@ -1,3 +1,5 @@
+#include <memory>
+
 #include "Pawn.h"
 #include "PieceType.h"
 #include "../Board.h"
@@ -10,7 +12,7 @@ bool Pawn::isValid(int newX, int newY, const Board* board) const{
 		return false;
 	}
 
-	const ChessPiece* newPosition = board->getPosition(newX, newY);
+	const std::shared_ptr<ChessPiece> newPosition = board->getPosition(newX, newY);
 
 	// If move is 1 forward with no piece in position
 	if(newX == xPosition && newY == (yPosition + direction) && newPosition == NULL){
@@ -25,13 +27,13 @@ bool Pawn::isValid(int newX, int newY, const Board* board) const{
 		return true;
 	}else if((newX == xPosition + 1 || newX == xPosition - 1) && newY == (yPosition + direction) && newPosition == NULL && board->getPosition(newX, yPosition) != NULL){
 		// Check if piece is pawn and just double jumped
-		const ChessPiece* enPassantPiece = board->getPosition(newX, yPosition);
+		const std::shared_ptr<ChessPiece> enPassantPiece = board->getPosition(newX, yPosition);
 
 		std::cout << "En Passent Pawn - " << board->getPosition(newX, yPosition) << ", New Pos - " << newPosition << std::endl;
-		std::cout << "X = " << newX << ", Y = " << yPosition << ", Pawn Moved On - " << ((Pawn*)enPassantPiece)->getDoubleMoveNum() << ", Move Num - " << "move num" << std::endl;
+		std::cout << "X = " << newX << ", Y = " << yPosition << ", Pawn Moved On - " << std::dynamic_pointer_cast<Pawn>(enPassantPiece)->getDoubleMoveNum() << ", Move Num - " << "move num" << std::endl;
 
 		// Need to get move number
-		if(enPassantPiece->getPieceColour() == !colourType && enPassantPiece->getPieceType() == PieceType::PAWN && ((Pawn*)enPassantPiece)->getDoubleMoveNum() == (board->getMoveNumber() - 1)){
+		if(enPassantPiece->getPieceColour() == !colourType && enPassantPiece->getPieceType() == PieceType::PAWN && std::dynamic_pointer_cast<Pawn>(enPassantPiece)->getDoubleMoveNum() == (board->getMoveNumber() - 1)){
 			return true;
 		}
 	}

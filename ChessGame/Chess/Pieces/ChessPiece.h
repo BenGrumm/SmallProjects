@@ -10,20 +10,23 @@ class ChessPiece{
 
 	public:
 		ChessPiece(Colour ct, const PieceType& pt, int x, int y);
-		virtual bool isValid(int newX, int newY, const Board* board) const = 0;
+		virtual ~ChessPiece() = default;
 		void move(int newX, int newY);
+		virtual bool isValid(int newX, int newY, const Board* board) const = 0;
 		[[nodiscard]] Colour getPieceColour() const;
 		[[nodiscard]] const PieceType& getPieceType() const;
 		friend std::ostream& operator<<(std::ostream& os, const ChessPiece& p);
 	protected:
 		Colour colourType;
-		const PieceType& piece;
+		const PieceType* piece;
 		int xPosition, yPosition;
-		ChessPiece() : piece(PieceType::PAWN){std::cout << "ERROR SHOULD PROBABLY FIX - Shouldnt be called" << std::endl;}
+		ChessPiece(){std::cout << "ERROR SHOULD PROBABLY FIX - Shouldnt be called" << std::endl;}
 
 };
 
-inline ChessPiece::ChessPiece(Colour ct, const PieceType& pt, int x, int y) : colourType(ct), piece(pt){
+inline ChessPiece::ChessPiece(Colour ct, const PieceType& pt, int x, int y){
+	colourType = ct;
+	piece = &pt;
 	xPosition = x;
 	yPosition = y;
 }
@@ -38,11 +41,11 @@ inline Colour ChessPiece::getPieceColour() const{
 }
 
 inline const PieceType& ChessPiece::getPieceType() const{
-	return piece;
+	return *piece;
 }
 
 inline std::ostream& operator<<(std::ostream& os, const ChessPiece& p){
-	os << ((p.colourType == Colour::WHITE) ? p.piece.getWhitePiece() : p.piece.getBlackPiece());
+	os << ((p.colourType == Colour::WHITE) ? p.piece->getWhitePiece() : p.piece->getBlackPiece());
 	return os;
 }
 

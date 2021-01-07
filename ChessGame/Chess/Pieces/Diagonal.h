@@ -12,6 +12,7 @@ class Diagonal : public virtual ChessPiece{
 
 	public:
 		Diagonal(Colour ct, const PieceType& pt, int x, int y);
+		virtual ~Diagonal() = default;
 		virtual bool isValid(int newX, int newY, const Board* board) const;
 	protected:
 

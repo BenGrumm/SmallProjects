@@ -8,6 +8,8 @@ class Rook : public HorizontalVertical{
 
 	public:
 		Rook(Colour ct, int x, int y);
+		Rook(const Rook& r);
+		~Rook() = default;
 		void setMoved();
 		[[nodiscard]] bool getIfMoved() const;
 	private:
@@ -16,6 +18,10 @@ class Rook : public HorizontalVertical{
 };
 
 inline Rook::Rook(Colour ct, int x, int y) : HorizontalVertical(ct, PieceType::ROOK, x, y), ChessPiece(ct, PieceType::ROOK, x, y){}
+
+inline Rook::Rook(const Rook& r) : HorizontalVertical(r.colourType, PieceType::ROOK, r.xPosition, r.yPosition), ChessPiece(r.colourType, PieceType::ROOK, r.xPosition, r.yPosition){
+	hasMoved = r.hasMoved;
+}
 
 inline void Rook::setMoved(){
 	hasMoved = true;
