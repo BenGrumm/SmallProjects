@@ -4,7 +4,7 @@ test: Game.o Board.o Diagonal.o HorizontalVertical.o Pawn.o PieceType.o
 	g++ testing.cpp Chess/Game.o Chess/Board.o Chess/Pieces/Diagonal.o Chess/Pieces/HorizontalVertical.o Chess/Pieces/Pawn.o Chess/Pieces/PieceType.o -o testing.exe
 
 cmdgame: Game.o Board.o Diagonal.o HorizontalVertical.o Pawn.o PieceType.o cmdmain.o
-	g++ CMDLine/cmdmain.o Chess/Game.o Chess/Board.o Chess/Pieces/Diagonal.o Chess/Pieces/HorizontalVertical.o Chess/Pieces/Pawn.o Chess/Pieces/PieceType.o -o CMDLine/cmdgame
+	g++ CMDLine/cmdmain.o Chess/Game.o Chess/Board.o Chess/Pieces/Diagonal.o Chess/Pieces/HorizontalVertical.o Chess/Pieces/Pawn.o Chess/Pieces/PieceType.o -o CMDLine/cmdgame.exe
 
 cmdmain.o:
 	g++ -c CMDLine/main.cpp -o CMDLine/cmdmain.o
@@ -28,4 +28,4 @@ PieceType.o:
 	g++ -c Chess/Pieces/PieceType.cpp -o Chess/Pieces/PieceType.o
 
 clean:
-	rm CMDLine/*.o Chess/*.o Chess/Pieces/*.o
+	rm CMDLine/*.o Chess/*.o Chess/Pieces/*.o *.exe CMDLine/*.exe
