@@ -12,19 +12,29 @@ int main(int argc, char const *argv[])
 
 	Board* boardA = new Board();
 
-	std::cout << "Address = " << boardA << std::endl << *boardA << std::endl;
-
 	Board* boardB = new Board;
+
+	boardA->movePiece(0, 7, 0, 5);
 
 	*boardB = *boardA;
 
-	const std::shared_ptr<ChessPiece> p = boardB->getPosition(0, 0);
+	std::cout << "Board A = " << *boardA << std::endl;
 
 	delete boardA;
 
-	std::cout << "Rook = ? " << p << std::endl;
+	std::cout << "Board B = " << *boardB << std::endl;
 
-	std::cout << "Address = " << boardB << std::endl << *boardB << std::endl;
+	std::unique_ptr<int> up = std::make_unique<int>(4);
+
+	std::cout << *up << std::endl;
+
+	std::unique_ptr<int> other = std::move(up);
+
+	// std::cout << up << std::endl;
+
+	std::cout << *other << std::endl;
+
+	std::cout << (up == NULL) << std::endl;
 
 	return 0;
 }

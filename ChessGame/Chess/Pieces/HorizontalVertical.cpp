@@ -24,7 +24,7 @@ inline bool HorizontalVertical::isValid(int newX, int newY, const Board* board) 
 		}	
 	}
 
-	const std::shared_ptr<ChessPiece> newPosition = board->getPosition(newX, newY);
+	const ChessPiece* newPosition = board->getPosition(newX, newY);
 
 	// if the position moving too is not null & the piece on position type is same as this false
 	if(newPosition != NULL && newPosition->getPieceColour() == colourType){
