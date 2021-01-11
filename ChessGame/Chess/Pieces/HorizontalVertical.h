@@ -11,12 +11,9 @@ class Board;
 class HorizontalVertical : public virtual ChessPiece{
 
 	public:
-		HorizontalVertical(Colour ct, const PieceType& pt, int x, int y);
 		virtual ~HorizontalVertical() = default;
 		virtual bool isValid(int newX, int newY, const Board* board) const;
 
 };
-
-inline HorizontalVertical::HorizontalVertical(Colour ct, const PieceType& pt, int x, int y) : ChessPiece(ct, pt, x, y){}
 
 #endif

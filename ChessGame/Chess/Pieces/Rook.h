@@ -17,9 +17,9 @@ class Rook : public HorizontalVertical{
 
 };
 
-inline Rook::Rook(Colour ct, int x, int y) : HorizontalVertical(ct, PieceType::ROOK, x, y), ChessPiece(ct, PieceType::ROOK, x, y){}
+inline Rook::Rook(Colour ct, int x, int y) : ChessPiece(ct, PieceType::ROOK, x, y){}
 
-inline Rook::Rook(const Rook& r) : HorizontalVertical(r.colourType, PieceType::ROOK, r.xPosition, r.yPosition), ChessPiece(r.colourType, PieceType::ROOK, r.xPosition, r.yPosition){
+inline Rook::Rook(const Rook& r) : ChessPiece(r.colourType, PieceType::ROOK, r.xPosition, r.yPosition){
 	hasMoved = r.hasMoved;
 }
 

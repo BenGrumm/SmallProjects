@@ -1,10 +1,10 @@
 all: cmdgame
 
-test: Game.o Board.o Diagonal.o HorizontalVertical.o Pawn.o PieceType.o
-	g++ testing.cpp Chess/Game.o Chess/Board.o Chess/Pieces/Diagonal.o Chess/Pieces/HorizontalVertical.o Chess/Pieces/Pawn.o Chess/Pieces/PieceType.o -o testing.exe
+test: Game.o Board.o Diagonal.o HorizontalVertical.o Pawn.o Knight.o PieceType.o
+	g++ testing.cpp Chess/Game.o Chess/Board.o Chess/Pieces/Diagonal.o Chess/Pieces/HorizontalVertical.o Chess/Pieces/Pawn.o Chess/Pieces/PieceType.o Chess/Pieces/Knight.o -o testing.exe
 
-cmdgame: Game.o Board.o Diagonal.o HorizontalVertical.o Pawn.o PieceType.o cmdmain.o
-	g++ CMDLine/cmdmain.o Chess/Game.o Chess/Board.o Chess/Pieces/Diagonal.o Chess/Pieces/HorizontalVertical.o Chess/Pieces/Pawn.o Chess/Pieces/PieceType.o -o CMDLine/cmdgame.exe
+cmdgame: Game.o Board.o Diagonal.o HorizontalVertical.o Pawn.o Knight.o PieceType.o cmdmain.o
+	g++ CMDLine/cmdmain.o Chess/Game.o Chess/Board.o Chess/Pieces/Diagonal.o Chess/Pieces/HorizontalVertical.o Chess/Pieces/Knight.o Chess/Pieces/Pawn.o Chess/Pieces/PieceType.o -o CMDLine/cmdgame.exe
 
 cmdmain.o:
 	g++ -c CMDLine/main.cpp -o CMDLine/cmdmain.o
@@ -23,6 +23,9 @@ HorizontalVertical.o:
 
 Pawn.o:
 	g++ -c Chess/Pieces/Pawn.cpp -o Chess/Pieces/Pawn.o
+
+Knight.o:
+	g++ -c Chess/Pieces/Knight.cpp -o Chess/Pieces/Knight.o
 
 PieceType.o:
 	g++ -c Chess/Pieces/PieceType.cpp -o Chess/Pieces/PieceType.o

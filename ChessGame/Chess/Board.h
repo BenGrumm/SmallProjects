@@ -9,6 +9,8 @@
 #include "Pieces/Pawn.h"
 #include "Pieces/Queen.h"
 #include "Pieces/Rook.h"
+#include "Pieces/Bishop.h"
+#include "Pieces/Knight.h"
 
 class Board{
 
@@ -59,7 +61,14 @@ inline void Board::populateBoard(){
 	for(int x = 0; x < 2; x++){
 		chessBoard[7][x * 7] = std::make_unique<Rook>(Rook(Colour::WHITE, (x * 7), 7));
 		chessBoard[0][x * 7] = std::make_unique<Rook>(Rook(Colour::BLACK, (x * 7), 0));
+
+		chessBoard[7][2 + (x * 3)] = std::make_unique<Bishop>(Bishop(Colour::WHITE, (2 + (x * 3)), 7));
+		chessBoard[0][2 + (x * 3)] = std::make_unique<Bishop>(Bishop(Colour::BLACK, (2 + (x * 3)), 0));
+
+		chessBoard[7][1 + (x * 5)] = std::make_unique<Knight>(Knight(Colour::WHITE, (1 + (x * 5)), 7));
+		chessBoard[0][1 + (x * 5)] = std::make_unique<Knight>(Knight(Colour::BLACK, (1 + (x * 5)), 0));;
 	}
+
 }
 
 inline const ChessPiece* Board::getPosition(int x, int y) const{

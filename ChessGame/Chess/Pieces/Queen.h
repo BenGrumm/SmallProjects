@@ -15,7 +15,7 @@ class Queen : public HorizontalVertical, public Diagonal {
 
 };
 
-inline Queen::Queen(Colour ct, int x, int y) : Diagonal(ct, PieceType::QUEEN, x, y), HorizontalVertical(ct, PieceType::QUEEN, x, y), ChessPiece(ct, PieceType::QUEEN, x, y){}
+inline Queen::Queen(Colour ct, int x, int y) : ChessPiece(ct, PieceType::QUEEN, x, y){}
 
 inline bool Queen::isValid(int newX, int newY, const Board* board) const{
 	return Diagonal::isValid(newX, newY, board) || HorizontalVertical::isValid(newX, newY, board);
