@@ -4,16 +4,18 @@
 #include "ChessPiece.h"
 #include "PieceType.h"
 
+#include "../Coordinates.h"
+
 class Knight : public ChessPiece{
 	public:
-		Knight(Colour ct, int x, int y);
+		Knight(Colour ct, const Coordinates& pos);
 		Knight(const Knight& p);
 		~Knight() = default;
-		bool isValid(int newX, int newY, const Board* board) const;
+		bool isValid(const Coordinates& newPos, const Board* board) const;
 };
 
-inline Knight::Knight(Colour ct, int x, int y) : ChessPiece(ct, PieceType::KNIGHT, x, y){}
+inline Knight::Knight(Colour ct, const Coordinates& pos) : ChessPiece(ct, PieceType::KNIGHT, pos){}
 
-inline Knight::Knight(const Knight& p) : ChessPiece(p.colourType, PieceType::KNIGHT, p.xPosition, p.yPosition){}
+inline Knight::Knight(const Knight& p) : ChessPiece(p.colourType, PieceType::KNIGHT, {p.xPosition, p.yPosition}){}
 
 #endif

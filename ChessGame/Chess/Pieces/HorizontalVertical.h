@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include "ChessPiece.h"
 #include "PieceType.h"
+#include "../Coordinates.h"
 
 class Board;
 
@@ -12,7 +13,7 @@ class HorizontalVertical : public virtual ChessPiece{
 
 	public:
 		virtual ~HorizontalVertical() = default;
-		virtual bool isValid(int newX, int newY, const Board* board) const;
+		virtual bool isValid(const Coordinates& newPos, const Board* board) const;
 
 };
 

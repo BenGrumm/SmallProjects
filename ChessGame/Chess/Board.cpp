@@ -1,5 +1,18 @@
 #include "Board.h"
 
+bool Board::isInCheck(const Coordinates& position, Colour kingColour) const{
+
+	for(int y = 0; y < 8; y++){
+		for(int x = 0; x < 8; x++){
+			if(chessBoard[y][x] != NULL && chessBoard[y][x]->getPieceColour() == !kingColour && chessBoard[y][x]->isValid(position, this)){
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
 std::ostream& operator<<(std::ostream& os, const Board& b){
 	os << "   -------------------------------";
 	for(int y = 0; y < 8; y++){

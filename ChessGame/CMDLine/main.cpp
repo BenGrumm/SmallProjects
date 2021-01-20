@@ -1,7 +1,7 @@
 #include <iostream>
 
-#include "MoveInput.h"
 #include "../Chess/Game.h"
+#include "../Chess/Coordinates.h"
 
 using namespace std;
 
@@ -10,12 +10,12 @@ int main(int argc, char const *argv[])
 
 	Game* g = new Game();
 	
-	MoveInput moveFrom;
-	MoveInput moveTo;
+	Coordinates moveFrom;
+	Coordinates moveTo;
 
 	while(true){
-		moveFrom = MoveInput();
-		moveTo = MoveInput();
+		moveFrom = Coordinates{};
+		moveTo = Coordinates{};
 
 		cout << *g << endl;
 
@@ -27,7 +27,7 @@ int main(int argc, char const *argv[])
 
 		cin >> moveTo;
 	
-		if(g->movePiece(moveFrom.x, moveFrom.y, moveTo.x, moveTo.y)){
+		if(g->movePiece(moveFrom, moveTo)){
 			cout << endl << "Piece Moved" << endl;
 		}else{
 			cout << endl << "Error Moving Piece" << endl;

@@ -2,16 +2,17 @@
 #define PAWN_H
 
 #include "ChessPiece.h"
+#include "../Coordinates.h"
 
 class Board;
 
 class Pawn : public ChessPiece{
 
 	public:
-		Pawn(Colour ct, int x, int y);
+		Pawn(Colour ct, const Coordinates& pos);
 		Pawn(const Pawn& p);
 		~Pawn() = default;
-		[[nodiscard]] bool isValid(int newX, int newY, const Board* board) const;
+		[[nodiscard]] bool isValid(const Coordinates& newPos, const Board* board) const;
 		[[nodiscard]] int getDoubleMoveNum();
 		void setDoubleMove(int moveNum);
 	private:
@@ -20,13 +21,13 @@ class Pawn : public ChessPiece{
 
 };
 
-inline Pawn::Pawn(Colour ct, int x, int y) : ChessPiece(ct, PieceType::PAWN, x, y){
+inline Pawn::Pawn(Colour ct, const Coordinates& pos) : ChessPiece(ct, PieceType::PAWN, pos){
 	// If white move up board, else black and move down
 	direction = (this->colourType == Colour::WHITE) ? -1 : 1;
 	movedOnMove = -1;
 }
 
-inline Pawn::Pawn(const Pawn& p) : ChessPiece(p.colourType, PieceType::PAWN, p.xPosition, p.yPosition){
+inline Pawn::Pawn(const Pawn& p) : ChessPiece(p.colourType, PieceType::PAWN, {p.xPosition, p.yPosition}){
 	direction = p.direction;
 	movedOnMove = p.movedOnMove;
 }

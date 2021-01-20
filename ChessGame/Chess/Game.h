@@ -14,7 +14,7 @@ class Game{
 
 	public:
 		Game();
-		bool movePiece(int originX, int originY, int destinationX, int destinationY);
+		bool movePiece(const Coordinates& origin, const Coordinates& destination);
 		[[nodiscard]] Colour whosTurn() const;
 		friend std::ostream& operator<<(std::ostream& os, Game& g);
 	private:

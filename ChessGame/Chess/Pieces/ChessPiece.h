@@ -4,15 +4,18 @@
 #include <iostream>
 #include "PieceType.h"
 
+#include "../Coordinates.h"
+
 class Board;
 
 class ChessPiece{
 
 	public:
-		ChessPiece(Colour ct, const PieceType& pt, int x, int y);
+		ChessPiece(Colour ct, const PieceType& pt, const Coordinates& position);
 		virtual ~ChessPiece() = default;
-		void move(int newX, int newY);
-		virtual bool isValid(int newX, int newY, const Board* board) const = 0;
+		void move(const Coordinates& position);
+		virtual bool isValid(const Coordinates& position, const Board* board) const = 0;
+		//virtual int** getValidMoved(const Board* board) const = 0;
 		[[nodiscard]] Colour getPieceColour() const;
 		[[nodiscard]] const PieceType& getPieceType() const;
 		friend std::ostream& operator<<(std::ostream& os, const ChessPiece& p);
@@ -24,16 +27,16 @@ class ChessPiece{
 
 };
 
-inline ChessPiece::ChessPiece(Colour ct, const PieceType& pt, int x, int y){
+inline ChessPiece::ChessPiece(Colour ct, const PieceType& pt, const Coordinates& position){
 	colourType = ct;
 	piece = &pt;
-	xPosition = x;
-	yPosition = y;
+	xPosition = position.x;
+	yPosition = position.y;
 }
 
-inline void ChessPiece::move(int newX, int newY){
-	xPosition = newX;
-	yPosition = newY;
+inline void ChessPiece::move(const Coordinates& position){
+	xPosition = position.x;
+	yPosition = position.y;
 }
 
 inline Colour ChessPiece::getPieceColour() const{

@@ -3,22 +3,23 @@
 
 #include "ChessPiece.h"
 #include "PieceType.h"
+#include "../Coordinates.h"
 
 class King : public ChessPiece{
 
 	public:
-		King(Colour ct, int x, int y);
+		King(Colour ct, const Coordinates& pos);
 		King(const King& k);
 		~King() = default;
-		bool isValid(int newX, int newY, const Board* board) const;
+		bool isValid(const Coordinates& newPos, const Board* board) const;
 	private:
 		bool hasMoved = false;
 
 };
 
-inline King::King(Colour ct, int x, int y) : ChessPiece(ct, PieceType::KING, x, y){}
+inline King::King(Colour ct, const Coordinates& pos) : ChessPiece(ct, PieceType::KING, pos){}
 
-inline King::King(const King& k) : ChessPiece(k.coulourType, PieceType::KING, k.xPosition, k.yPosition){
+inline King::King(const King& k) : ChessPiece(k.colourType, PieceType::KING, {k.xPosition, k.yPosition}){
 	hasMoved = k.hasMoved;
 }
 

@@ -9,16 +9,16 @@
 class Queen : public HorizontalVertical, public Diagonal {
 
 	public:
-		Queen(Colour ct, int x, int y);
+		Queen(Colour ct, const Coordinates& pos);
 		~Queen() = default;
-		bool isValid(int newX, int newY, const Board* board) const;
+		bool isValid(const Coordinates& newPos, const Board* board) const;
 
 };
 
-inline Queen::Queen(Colour ct, int x, int y) : ChessPiece(ct, PieceType::QUEEN, x, y){}
+inline Queen::Queen(Colour ct, const Coordinates& pos) : ChessPiece(ct, PieceType::QUEEN, pos){}
 
-inline bool Queen::isValid(int newX, int newY, const Board* board) const{
-	return Diagonal::isValid(newX, newY, board) || HorizontalVertical::isValid(newX, newY, board);
+inline bool Queen::isValid(const Coordinates& newPos, const Board* board) const{
+	return Diagonal::isValid(newPos, board) || HorizontalVertical::isValid(newPos, board);
 }
 
 #endif
