@@ -55,6 +55,8 @@ inline bool Board::withinBoard(const Coordinates& position){
 
 inline void Board::populateBoard(){
 
+	// TODO add to pieces
+
 	// Populate pawns
 	for(int x = 0; x < 8; x++){
 		// Last rows printed last which is bottom of board
@@ -103,6 +105,8 @@ inline void Board::movePiece(const Coordinates& origin, const Coordinates& desti
 
 	chessBoard[destination.y][destination.x] = std::move(chessBoard[origin.y][origin.x]);
 
+	// TODO deal with removing from coloured pieces
+
 	chessBoard[destination.y][destination.x]->move(destination);
 
 }
@@ -126,6 +130,8 @@ inline Board& Board::operator=(const Board& other){
 
 inline void Board::copyBoard(const Board& other){
 
+	// TODO copy the pieces to correct side vector
+
 	for(int y = 0; y < 8; y++){
 		for(int x = 0; x < 8; x++){
 
@@ -145,6 +151,20 @@ inline void Board::copyBoard(const Board& other){
 
 					this->chessBoard[y][x] = std::make_shared<Queen>( Queen( *(dynamic_cast<Queen*>(other.chessBoard[y][x].get())) ) );
 
+				}else if(other.chessBoard[y][x]->getPieceType() == PieceType::KING){
+
+					this->chessBoard[y][x] = std::make_shared<King>( King( *(dynamic_cast<King*>(other.chessBoard[y][x].get())) ) );
+
+				}else if(other.chessBoard[y][x]->getPieceType() == PieceType::BISHOP){
+
+					this->chessBoard[y][x] = std::make_shared<Bishop>( Bishop( *(dynamic_cast<Bishop*>(other.chessBoard[y][x].get())) ) );
+
+				}else if(other.chessBoard[y][x]->getPieceType() == PieceType::KNIGHT){
+
+					this->chessBoard[y][x] = std::make_shared<Knight>( Knight( *(dynamic_cast<Knight*>(other.chessBoard[y][x].get())) ) );
+
+				}else{
+					std::cout << "Error Unknown Type Copying Board" << std::endl;
 				}
 
 			}

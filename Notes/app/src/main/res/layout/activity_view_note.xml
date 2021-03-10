@@ -5,7 +5,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".activities.ViewNoteActivity"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/view_note_layout">
+    android:id="@+id/view_note_layout"
+    android:theme="@style/ThemeWithCorners"
+    android:background="#FFFFFFFF">
 
     <TextView
         android:id="@+id/noteBodyTextView"
@@ -22,6 +24,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Need to do x y and z"
-        android:scrollbars="vertical"/>
+        android:scrollbars="vertical"
+        android:background="#00FFFFFF"/>
 
 </android.support.constraint.ConstraintLayout>

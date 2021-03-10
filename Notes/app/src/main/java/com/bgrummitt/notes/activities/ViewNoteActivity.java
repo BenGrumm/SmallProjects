@@ -1,6 +1,9 @@
 package com.bgrummitt.notes.activities;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.method.ScrollingMovementMethod;
@@ -56,7 +59,10 @@ public class ViewNoteActivity extends AppCompatActivity {
 
         // Set the size of this activity
         getWindow().setLayout((int) (width * 0.8), (int) (height * 0.7));
-        getWindow().setBackgroundDrawable(getDrawable(R.drawable.note_background_shape));
+        getWindow().getDecorView().setBackgroundResource(android.R.color.transparent);
+
+        // Used to give nice rounded corners now just rounds and replaces space with black
+        // getWindow().setBackgroundDrawableResource(R.drawable.note_background_shape);
 
         // Center the activity
         WindowManager.LayoutParams params = getWindow().getAttributes();
