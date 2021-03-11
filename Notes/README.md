@@ -6,3 +6,9 @@ Android app for recording notes and todo items.
 
 ### View TODO & Completed
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <img src="https://i.imgur.com/9QvRBm8.png" height="200">
+
+This is an android app written in java for keeping track of tasks and recording thoughts.
+
+It uses recycler views to hold your notes. You can select a group of notes to complete/delete at once, but if you selecetd one you didnt mean to you can undo the complete/delete and the tasks will return to the positions they were in before you deleted them.
+
+View the tasks you have completed in the completed section and then delete them permanantly.
