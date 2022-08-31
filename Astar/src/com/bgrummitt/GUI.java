@@ -6,6 +6,8 @@ import java.awt.event.ActionEvent;
 
 public class GUI extends JFrame{
 
+    private static final int GRID_SIZE = 20;
+
     private GridPanel gridPanel;
     private JButton solveButton;
     private JButton clearButton;
@@ -35,7 +37,7 @@ public class GUI extends JFrame{
 
         // Create new 10x10 grid of maze
         // When changing size of grid must also change where path is going
-        gridPanel = new GridPanel(10, 10);
+        gridPanel = new GridPanel(GRID_SIZE, GRID_SIZE, 30);
 
         // Add buttons and maze to JFrame
         setLayout(new BorderLayout());
@@ -45,7 +47,7 @@ public class GUI extends JFrame{
         // Set solve button to solve maze display it and then disable solve button until cleared
         solveButton.addActionListener((ActionEvent e) -> {
             AStar solver = new AStar(gridPanel.getMaze());
-            int[][] solvedMaze = solver.solveMaze(new int[]{0, 0}, new int[]{9, 9});
+            int[][] solvedMaze = solver.solveMaze(new int[]{0, 0}, new int[]{GRID_SIZE-1, GRID_SIZE-1});
             gridPanel.setSolvedMaze(solvedMaze);
             solveButton.setEnabled(false);
         });
